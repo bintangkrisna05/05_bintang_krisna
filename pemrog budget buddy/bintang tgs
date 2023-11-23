@@ -1,0 +1,67 @@
+import tkinter as tk
+from tkinter import ttk
+
+class BudgetApp:
+    def __init__(self, root):
+        self.root = root
+        self.worksheets = []
+
+        # create a menu bar
+        self.menu = tk.Menu(self.root)
+        self.root.config(menu=self.menu)
+
+        # create a file menu
+        self.file_menu = tk.Menu(self.menu)
+        self.menu.add_cascade(label="File", menu=self.file_menu)
+        self.file_menu.add_command(label="New Worksheet", command=self.create_worksheet)
+
+        # create a button to create a new worksheet
+        self.new_worksheet_button = ttk.Button(self.root, text="New Worksheet", command=self.create_worksheet)
+        self.new_worksheet_button.pack(pady=10)
+
+    def create_worksheet(self):
+        # create a new toplevel window for the worksheet
+        worksheet_window = tk.Toplevel(self.root)
+        worksheet_window.title("Worksheet")
+
+        # create labels and entry boxes for pemasukan and pengeluaran
+        pemasukan_label = ttk.Label(worksheet_window, text="Pemasukan:")
+        pemasukan_label.grid(row=0, column=0)
+        pemasukan_entry = ttk.Entry(worksheet_window)
+        pemasukan_entry.grid(row=0, column=1)
+
+        pengeluaran_label = ttk.Label(worksheet_window, text="Pengeluaran:")
+        pengeluaran_label.grid(row=1, column=0)
+        pengeluaran_entry = ttk.Entry(worksheet_window)
+        pengeluaran_entry.grid(row=1, column=1)
+
+        # create a button to calculate the budget
+        calculate_budget_button = ttk.Button(worksheet_window, text="Calculate Budget", command=lambda: self.calculate_budget(pemasukan_entry, pengeluaran_entry, worksheet_window))
+        calculate_budget_button.grid(row=2, column=0, columnspan=2)
+
+        # add the worksheet window to the list of worksheets
+        self.worksheets.append(worksheet_window)
+
+    def calculate_budget(self, pemasukan_entry, pengeluaran_entry, worksheet_window):
+        # calculate the budget and display it
+        try:
+            pemasukan = float(pemasukan_entry.get())
+            pengeluaran = float(pengeluaran_entry.get())
+            budget = pemasukan - pengeluaran
+
+            if budget >= 0:
+                budget_label = ttk.Label(worksheet_window, text=f"Budget: {budget}")
+                budget_label.grid(row=3, column=0, columnspan=2)
+            else:
+                budget_label = ttk.Label(worksheet_window, text=f"Deficit: {abs(budget)}")
+                budget_label.grid(row=3, column=0, columnspan=2)
+        except ValueError:
+            budget_label = ttk.Label(worksheet_window, text="Error: Please enter valid numbers")
+            budget_label.grid(row=3, column=0, columnspan=2)
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = BudgetApp(root)
+    root.mainloop()
+
+    
